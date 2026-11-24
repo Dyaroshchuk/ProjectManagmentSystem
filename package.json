@@ -14,6 +14,9 @@
     "test:unit:coverage": "sfdx-lwc-jest --coverage",
     "prettier": "prettier --write \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
     "prettier:verify": "prettier --check \"**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}\"",
+    "seed:users": "sf apex run -f scripts/apex/create-demo-users.apex",
+    "seed:data": "sf apex run -f scripts/apex/seed-data.apex",
+    "seed": "npm run seed:users && npm run seed:data",
     "prepare": "husky || true",
     "precommit": "lint-staged"
   },
