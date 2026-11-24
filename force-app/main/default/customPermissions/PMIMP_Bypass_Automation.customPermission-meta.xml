@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomPermission xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description
+  >Bypasses all PMIMP trigger automation (defaults, validation, sharing, activity tracking). For data migrations and app admins only.</description>
+    <isLicensed>false</isLicensed>
+    <label>PMIMP Bypass Automation</label>
+</CustomPermission>

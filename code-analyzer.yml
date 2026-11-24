@@ -18,6 +18,14 @@ suppressions:
   disable_suppressions: false
 
 # Per-rule overrides: rules.<engine>.<rule>.{severity|tags|disabled}
-rules: {}
+rules:
+  pmd:
+    # Requires System.runAs in every test method. Pure unit tests (framework,
+    # parsers, in-memory logic) gain nothing from it; tests where the user matters
+    # (sharing matrix, permissions, bypass) use runAs deliberately.
+    ApexUnitTestClassShouldHaveRunAs:
+      disabled: true
 
-engines: {}
+engines:
+  eslint:
+    eslint_config_file: "eslint.config.js"
