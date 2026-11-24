@@ -82,11 +82,15 @@ jobs:
           SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
           SF_DEVHUB_USERNAME: ${{ secrets.SF_DEVHUB_USERNAME }}
         run: |
-          printf '%s\n' "$SF_JWT_KEY" > "$RUNNER_TEMP/server.key"
+          # Strip whitespace/newlines that sneak in when pasting secrets.
+          CLIENT_ID="$(printf '%s' "$SF_CLIENT_ID" | tr -d '[:space:]')"
+          DEVHUB_USER="$(printf '%s' "$SF_DEVHUB_USERNAME" | tr -d '[:space:]')"
+          echo "client id length: ${#CLIENT_ID} (expected 85), username length: ${#DEVHUB_USER}"
+          printf '%s\n' "$SF_JWT_KEY" | tr -d '\r' > "$RUNNER_TEMP/server.key"
           sf org login jwt \
-            --client-id "$SF_CLIENT_ID" \
+            --client-id "$CLIENT_ID" \
             --jwt-key-file "$RUNNER_TEMP/server.key" \
-            --username "$SF_DEVHUB_USERNAME" \
+            --username "$DEVHUB_USER" \
             --alias DevHub \
             --set-default-dev-hub
           rm -f "$RUNNER_TEMP/server.key"
