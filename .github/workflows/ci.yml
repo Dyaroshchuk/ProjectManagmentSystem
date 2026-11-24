@@ -96,6 +96,13 @@ jobs:
           rm -f "$RUNNER_TEMP/server.key"
 
       - name: Create scratch org
+        env:
+          # The Dev Hub is authorized via an External Client App (JWT). Scratch org
+          # signup can't replicate an ECA into the new org (error C-1016), so let
+          # the CLI's built-in PlatformCLI app handle the signup instead.
+          # See https://github.com/forcedotcom/cli/issues/3515
+          SF_SCRATCH_SIGNUP_CONNECTED_APP: PlatformCLI
+          SF_SCRATCH_SIGNUP_CALLBACK_URL: http://localhost:1717/OauthRedirect
         run: |
           sf org create scratch \
             --definition-file config/project-scratch-def.json \
