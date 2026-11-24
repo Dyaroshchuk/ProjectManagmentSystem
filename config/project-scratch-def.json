@@ -1,0 +1,16 @@
+{
+  "orgName": "PMIMP Dev",
+  "edition": "Developer",
+  "language": "en_US",
+  "country": "US",
+  "hasSampleData": false,
+  "features": ["EnableSetPasswordInApi"],
+  "settings": {
+    "lightningExperienceSettings": {
+      "enableS1DesktopEnabled": true
+    },
+    "mobileSettings": {
+      "enableS1EncryptedStoragePref2": false
+    }
+  }
+}

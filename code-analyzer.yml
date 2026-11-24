@@ -1,0 +1,23 @@
+# Salesforce Code Analyzer v5 configuration for PMIMP.
+# Docs: https://developer.salesforce.com/docs/platform/salesforce-code-analyzer/guide/config-custom.html
+# Run: npm run scan   (CI: npm run scan:ci, fails on Moderate or worse)
+
+config_root: null # defaults to this file's folder
+log_folder: null # defaults to the OS temp folder
+log_level: 3 # Info
+
+ignores:
+  files:
+    - "**/node_modules/**"
+    - "**/.sfdx/**"
+    - "**/.sf/**"
+    - "**/coverage/**"
+    - "**/jest-mocks/**"
+
+suppressions:
+  disable_suppressions: false
+
+# Per-rule overrides: rules.<engine>.<rule>.{severity|tags|disabled}
+rules: {}
+
+engines: {}
