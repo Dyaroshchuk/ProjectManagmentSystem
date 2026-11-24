@@ -1,29 +1,67 @@
-# Salesforce DX Project
+# PMIMP — Project Management on Salesforce
 
 [![CI](https://github.com/Dyaroshchuk/ProjectManagmentSystem/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Dyaroshchuk/ProjectManagmentSystem/actions/workflows/ci.yml)
 
-Salesforce DX is a development approach that brings source-driven development, team collaboration, and continuous integration to the Salesforce Platform. Instead of working directly in an org through a web browser, you work with metadata as source files in a local DX project, track changes in version control, and deploy through automated processes.
+PMIMP is a Kanban project management app built natively on the Salesforce Platform.
 
-This project template gets you started with the tools and structure you need to build Salesforce applications using source control, scratch orgs, and the Salesforce CLI.
+- **Isolated workspaces** in one org: members see only the workspaces they belong to
+  (Owner, Admin, Member, Viewer roles, enforced with Salesforce sharing).
+- **Per-project workflows**: configurable statuses and allowed transitions, from
+  starter templates (Simple, Software, Content).
+- **Kanban board** on the Project record page with drag-and-drop and keyboard moves.
+- **Work items with keys** like `PRJ-123`, one level of subtasks, soft delete.
+- **Activity log** of every tracked change, written asynchronously via Platform Events.
+- **API-first**: the LWC UI and the Apex REST API (`/v1/*`) share one service layer
+  and return the same DTOs. Flow integration through invocable actions.
 
-## Prerequisites
+> **Status:** early development. The board (v0.1) is planned for February 2027 and
+> the MVP for March 2027. See [Roadmap](#roadmap).
 
-Before you start, make sure you have:
+## Tech stack
 
-- **Salesforce CLI** - Download from [developer.salesforce.com/tools/salesforcecli](https://developer.salesforce.com/tools/salesforcecli). See [Install Salesforce CLI](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_install_cli.htm) for details.
-- **VS Code with Salesforce Extension Pack** - See [Installation Instructions](https://developer.salesforce.com/docs/platform/sfvscode-extensions/guide/install.html) for details. Includes the Agentforce Vibes extension.
-- **A development org** - Sign up for a free Developer Edition org [here](https://developer.salesforce.com/signup).
-- **Dev Hub enabled** (optional, required to create scratch orgs) - You can enable Dev Hub in your development org under Setup > Dev Hub. See [Provide Developers Access to Salesforce DX Tools](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_setup_dx_tools.htm).
+Apex (lightweight Service / Domain / Selector layering, no external libraries) ·
+Lightning Web Components · Platform Events · Custom Metadata · Apex REST ·
+Salesforce CLI (`sf`) · GitHub Actions · Jest · Salesforce Code Analyzer.
 
-## Scratch org
+Plain SFDX source — no managed package, no namespace.
 
-Create a dev org (Developer edition, 7 days) in one command:
+## Getting started
+
+### Prerequisites
+
+- [Salesforce CLI](https://developer.salesforce.com/tools/salesforcecli) (`sf`) and
+  the Code Analyzer plugin: `sf plugins install code-analyzer`
+- Node.js LTS and npm
+- A Dev Hub org (a free [Developer Edition](https://developer.salesforce.com/signup)
+  with Dev Hub enabled under Setup → Dev Hub), authorized with
+  `sf org login web --set-default-dev-hub --alias DevHub`
+
+### Set up a scratch org
 
 ```bash
+npm install
 sf org create scratch -f config/project-scratch-def.json -a pmimp -d -y 7
+sf project deploy start -o pmimp
+npm run seed                      # demo users + sample data (rerunnable)
+sf org open -o pmimp
 ```
 
-Platform Events (`Activity_Event__e`) need no extra scratch org feature.
+### Develop and test
+
+```bash
+sf apex run test -o pmimp --test-level RunLocalTests --code-coverage --result-format human --wait 30
+npm run test:unit                 # LWC Jest
+npm run lint                      # ESLint for LWC
+npm run prettier:verify           # formatting
+npm run scan                      # Salesforce Code Analyzer
+```
+
+A pre-commit hook (Husky + lint-staged) formats staged files and runs related Jest tests.
+
+## Scratch org and demo users
+
+The scratch org is Developer edition (`config/project-scratch-def.json`). Platform
+Events need no extra scratch org feature.
 
 User licenses in a Developer-edition scratch org (measured 2026-11-24):
 
@@ -32,50 +70,61 @@ User licenses in a Developer-edition scratch org (measured 2026-11-24):
 | Salesforce          | 2     | 1             | 1    |
 | Salesforce Platform | 3     | 0             | 3    |
 
-That gives 4 free seats. The scratch org admin user plays the workspace **Owner**;
-the seed script creates the other demo users (Admin, Member, Viewer, outsider) on
-the remaining seats. Platform-license users are enough because the app uses only
-custom objects.
+The scratch org admin plays the workspace **Owner**. `npm run seed` creates the
+other demo users on the 4 free seats:
 
-## Project Structure
+| Persona  | Username                                   | License             |
+| -------- | ------------------------------------------ | ------------------- |
+| Admin    | `pmimp.admin@<orgid>.pmimp.example.com`    | Salesforce Platform |
+| Member   | `pmimp.member@<orgid>.pmimp.example.com`   | Salesforce Platform |
+| Viewer   | `pmimp.viewer@<orgid>.pmimp.example.com`   | Salesforce Platform |
+| Outsider | `pmimp.outsider@<orgid>.pmimp.example.com` | Salesforce          |
 
-Your DX project follows this structure:
+To log in as a demo user, set a password with
+`sf org generate password -o pmimp --on-behalf-of <username>`, or use **Login** on
+the user record in Setup.
 
-- **`force-app/main/default/`** - Your metadata source files live in this default package directory. You can configure additional package directories in the `sfdx-project.json` file.
-- **`config/`** - Scratch org definitions and project settings
-- **`scripts/`** - Automation scripts for common tasks
-- **`sfdx-project.json`** - Project manifest that defines package directories, namespace, API version, and other project-level settings
+## Continuous integration
 
-See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm).
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on pushes to `master` and
+on pull requests:
 
-## Get Started
+1. Prettier, ESLint, LWC Jest, Code Analyzer (report uploaded as an artifact).
+2. JWT login to the Dev Hub, a one-day scratch org, deploy, Apex tests; the scratch
+   org is always deleted.
 
-Ready to start developing? The [Get Started with Salesforce DX](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_get_started_dx.htm) guide walks you through your first project, from creating a scratch org to creating a simple Apex class or LWC to deploying your code to a sandbox.
+Required repository secrets: `SF_CLIENT_ID` (consumer key of the Dev Hub External
+Client App), `SF_JWT_KEY` (private key matching the app's certificate) and
+`SF_DEVHUB_USERNAME`.
 
-## Common Salesforce CLI Commands
+## Project structure
 
-Here are common CLI commands that you'll use the most:
+```
+force-app/main/default/
+  classes/        Apex: framework, selectors, domain, services, sharing, async,
+                  api (REST), controllers (LWC), invocable, tests
+  triggers/       one logic-free trigger per object
+  lwc/            Lightning Web Components (board, cards, modals, timeline)
+  objects/  customMetadata/  permissionsets/  flows/  labels/
+scripts/apex/     create-demo-users.apex, seed-data.apex
+config/           scratch org definition
+.github/          CI workflow
+```
 
-- `sf org login web`: Authorize an org
-- `sf org open`: Open your org in a browser
-- `sf org create scratch`: Create a scratch org
-- `sf project deploy start`: Deploy metadata to your org
-- `sf project retrieve start`: Retrieve metadata from your org
-- `sf template generate <artifact>`: Scaffold new components, such as Apex classes and triggers, LWC components, Lightning apps, and more
-- `sf apex <command>`: Run Apex tests, run anonymous Apex blocks, and view logs
-- `sf data <command>`: Work with test data
-- `sf alias <command>`: Manage org aliases
-- `sf config <command>`: Configure CLI settings
+## Roadmap
 
-## Use Agentforce Vibes to Build Lightning Apps
+| Milestone                                       | Target      |
+| ----------------------------------------------- | ----------- |
+| M0 Setup — repo, scratch org, CI, seed scripts  | Dec 2026    |
+| M1 Foundation — data model, workspaces, sharing | Dec 2026    |
+| M2 Projects, workflows, keys, work items        | Jan 2027    |
+| M3 Kanban board (**v0.1**)                      | Feb 12 2027 |
+| M4 Activity log and logging                     | Feb 2027    |
+| M5 REST API and automation                      | Mar 2027    |
+| M6 Hardening and showcase (**MVP**)             | Mar 26 2027 |
 
-Transform your ideas into custom Lightning apps that extend CRM workflows directly in Lightning Experience. Through natural conversations with Agentforce Vibes, implement custom objects and fields, complex business logic, and dynamic UI components. See [Build a Lightning App Using Agentforce Vibes](https://developer.salesforce.com/docs/platform/einstein-for-devs/guide/lexapp-overview.html).
+## Design documentation
 
-## Additional Resources
-
-- [Agentforce Vibes Developer Guide](https://developer.salesforce.com/docs/platform/einstein-for-devs/guide/einstein-overview.html)
-- [Salesforce CLI Installation Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/)
-- [Salesforce CLI Plugin Development Guide](https://developer.salesforce.com/docs/platform/salesforce-cli-plugin/guide/conceptual-overview.html)
-- [Salesforce VS Code Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
+The full design — HLD/LLD, ERD, UML diagrams and architecture decision records —
+is maintained alongside the code and will be published with M6. Until then, this
+README is the public overview.
