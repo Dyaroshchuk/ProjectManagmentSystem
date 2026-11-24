@@ -16,6 +16,13 @@ public abstract with sharing class TriggerHandler {
   private String name;
 
   /**
+   * @description The trigger context of the current call, set by the dispatcher. Useful
+   * where the per-context arguments are not enough (platform event triggers have no
+   * Trigger.newMap, so their handlers read {@code context.newRecords}).
+   */
+  public TriggerDispatcher.Context context { get; set; }
+
+  /**
    * @description Name used for bypass and recursion tracking. Defaults to the class name.
    * @return the handler name
    */

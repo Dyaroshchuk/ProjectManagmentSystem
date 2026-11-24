@@ -61,9 +61,12 @@ public with sharing class TriggerDispatcher {
     }
 
     depthByHandler.put(name, depth + 1);
+    TriggerDispatcher.Context outerContext = handler.context;
+    handler.context = context;
     try {
       dispatch(handler, context);
     } finally {
+      handler.context = outerContext;
       depthByHandler.put(name, depth);
     }
   }

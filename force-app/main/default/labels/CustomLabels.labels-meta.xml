@@ -8,4 +8,14 @@
         <shortDescription>PMIMP application name</shortDescription>
         <value>PMIMP</value>
     </labels>
+    <labels>
+        <fullName>PMIMP_Error_Unexpected</fullName>
+        <categories>PMIMP,Errors</categories>
+        <language>en_US</language>
+        <protected>false</protected>
+        <shortDescription
+    >Generic message for unexpected errors</shortDescription>
+        <value
+    >Something went wrong. Please try again or contact your administrator.</value>
+    </labels>
 </CustomLabels>
