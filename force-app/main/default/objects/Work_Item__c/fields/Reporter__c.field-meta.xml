@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reporter__c</fullName>
+    <description>Original creator; survives ownership transfer.</description>
+    <label>Reporter</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>PMIMP_Reported_Work_Items</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

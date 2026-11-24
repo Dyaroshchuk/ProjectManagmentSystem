@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Actor__c</fullName>
+    <description
+  >User who made the change (from the event payload).</description>
+    <label>Actor</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>PMIMP_Activity_Logs</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

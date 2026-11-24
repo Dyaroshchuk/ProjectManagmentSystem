@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Archived_By__c</fullName>
+    <description>User who archived the record.</description>
+    <label>Archived By</label>
+    <referenceTo>User</referenceTo>
+    <relationshipName>PMIMP_Archived_Projects</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

@@ -6,7 +6,7 @@ private class LoggerTest {
       SELECT
         Type__c,
         Message__c,
-        Code__c,
+        Error_Code__c,
         Source__c,
         Stack_Trace__c,
         Correlation_Id__c,
@@ -47,7 +47,7 @@ private class LoggerTest {
     Log__c error = byType.get(Logger.TYPE_ERROR);
     Assert.areEqual('Error message', error.Message__c);
     Assert.areEqual('SvcA.run', error.Source__c);
-    Assert.areEqual(ErrorCodes.CONFLICT, error.Code__c);
+    Assert.areEqual(ErrorCodes.CONFLICT, error.Error_Code__c);
     Assert.areEqual(recordId, error.Record_Id__c);
     Assert.areEqual('{"count":2}', byType.get(Logger.TYPE_WARN).Context__c);
     Assert.areEqual('Info message', byType.get(Logger.TYPE_INFO).Message__c);
@@ -64,7 +64,7 @@ private class LoggerTest {
     Log__c log = deliverAndQuery()[0];
     Assert.areEqual(Logger.TYPE_ERROR, log.Type__c);
     Assert.areEqual('Only admins can edit workflows.', log.Message__c);
-    Assert.areEqual(ErrorCodes.FORBIDDEN, log.Code__c);
+    Assert.areEqual(ErrorCodes.FORBIDDEN, log.Error_Code__c);
     Assert.isTrue(
       log.Stack_Trace__c.startsWith('ForbiddenException'),
       log.Stack_Trace__c
@@ -76,7 +76,7 @@ private class LoggerTest {
     Logger.error('X.y', new MathException('boom'));
     Logger.flush();
     Log__c log = deliverAndQuery()[0];
-    Assert.isNull(log.Code__c);
+    Assert.isNull(log.Error_Code__c);
     Assert.isTrue(
       log.Stack_Trace__c.startsWith('System.MathException'),
       log.Stack_Trace__c

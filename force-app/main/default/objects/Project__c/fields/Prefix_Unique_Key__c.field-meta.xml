@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prefix_Unique_Key__c</fullName>
+    <caseSensitive>true</caseSensitive>
+    <description
+  >WorkspaceId:PREFIX. The prefix is unique per workspace.</description>
+    <externalId>true</externalId>
+    <label>Prefix Unique Key</label>
+    <length>29</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>true</unique>
+</CustomField>

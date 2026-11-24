@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Action__c</fullName>
+    <description>Kind of change.</description>
+    <label>Action</label>
+    <required>false</required>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>false</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>Created</fullName><default>false</default><label
+        >Created</label></value>
+            <value><fullName>Updated</fullName><default>false</default><label
+        >Updated</label></value>
+            <value><fullName>Status_Changed</fullName><default
+        >false</default><label>Status_Changed</label></value>
+            <value><fullName>Moved</fullName><default>false</default><label
+        >Moved</label></value>
+            <value><fullName>Assigned</fullName><default>false</default><label
+        >Assigned</label></value>
+            <value><fullName>Archived</fullName><default>false</default><label
+        >Archived</label></value>
+            <value><fullName>Restored</fullName><default>false</default><label
+        >Restored</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

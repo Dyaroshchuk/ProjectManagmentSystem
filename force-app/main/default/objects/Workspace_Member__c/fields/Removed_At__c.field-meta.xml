@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Removed_At__c</fullName>
+    <description>When the user was removed (UTC).</description>
+    <label>Removed At</label>
+    <required>false</required>
+    <type>DateTime</type>
+</CustomField>

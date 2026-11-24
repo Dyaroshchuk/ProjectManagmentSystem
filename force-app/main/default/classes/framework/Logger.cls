@@ -26,7 +26,7 @@ public with sharing class Logger {
   @TestVisible
   private static final Integer MAX_MESSAGE = 32768;
   @TestVisible
-  private static final Integer MAX_CONTEXT = 131072;
+  private static final Integer MAX_CONTEXT = 32768;
   @TestVisible
   private static final Integer MAX_BUFFER = 2000;
 
@@ -140,7 +140,7 @@ public with sharing class Logger {
    * @param value correlation ID (blank resets to the request ID)
    */
   public static void setCorrelationId(String value) {
-    correlationId = String.isBlank(value) ? null : value.left(100);
+    correlationId = String.isBlank(value) ? null : value.left(64);
   }
 
   private static Entry add(String type, String source, String message) {
@@ -188,7 +188,7 @@ public with sharing class Logger {
      * @return this entry
      */
     public Entry withCode(String code) {
-      event.Code__c = truncate(code, 80);
+      event.Error_Code__c = truncate(code, 64);
       return this;
     }
 

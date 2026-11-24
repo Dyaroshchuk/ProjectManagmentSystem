@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Workspace__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description
+  >Workspace of the changed record (sharing and filtering).</description>
+    <label>Workspace</label>
+    <referenceTo>Workspace__c</referenceTo>
+    <relationshipLabel>Activity Logs</relationshipLabel>
+    <relationshipName>Activity_Logs</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

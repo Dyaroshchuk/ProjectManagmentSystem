@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Workspace__c</fullName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <description
+  >Denormalized from the project for sharing and filtering. Immutable; required in Apex.</description>
+    <label>Workspace</label>
+    <referenceTo>Workspace__c</referenceTo>
+    <relationshipLabel>Work Items</relationshipLabel>
+    <relationshipName>Work_Items</relationshipName>
+    <required>false</required>
+    <type>Lookup</type>
+</CustomField>

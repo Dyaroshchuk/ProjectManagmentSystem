@@ -16,7 +16,7 @@ public with sharing class LogEventTriggerHandler extends TriggerHandler {
         new Log__c(
           Type__c = evt.Type__c,
           Message__c = evt.Message__c,
-          Code__c = evt.Code__c,
+          Error_Code__c = evt.Error_Code__c,
           Source__c = evt.Source__c,
           Stack_Trace__c = evt.Stack_Trace__c,
           Correlation_Id__c = evt.Correlation_Id__c,

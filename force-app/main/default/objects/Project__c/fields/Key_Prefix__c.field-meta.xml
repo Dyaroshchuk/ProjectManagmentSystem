@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Key_Prefix__c</fullName>
+
+    <description
+  >Prefix of work item keys: an uppercase letter, then 1-9 uppercase letters or digits. Immutable after creation.</description>
+    <externalId>false</externalId>
+    <label>Key Prefix</label>
+    <length>10</length>
+    <required>false</required>
+    <type>Text</type>
+    <unique>false</unique>
+</CustomField>
