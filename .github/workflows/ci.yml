@@ -1,0 +1,122 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+# One run per branch/PR at a time; a new push cancels the old run
+# (saves Dev Hub scratch org limits: 3 active, 6 per day).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  static:
+    name: Lint, format, Jest, Code Analyzer
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17" # PMD engine of Code Analyzer
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Prettier
+        run: npm run prettier:verify
+
+      - name: ESLint
+        run: npm run lint
+
+      - name: LWC Jest
+        run: npm run test:unit
+
+      - name: Install Salesforce CLI + Code Analyzer
+        run: |
+          npm install --global @salesforce/cli
+          sf plugins install code-analyzer
+
+      - name: Code Analyzer
+        run: npm run scan:ci
+
+      - name: Upload Code Analyzer report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: code-analyzer-results
+          path: code-analyzer-results.html
+          if-no-files-found: ignore
+
+  org:
+    name: Scratch org deploy + Apex tests
+    needs: static
+    runs-on: ubuntu-latest
+    env:
+      SCRATCH_ALIAS: ci
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+
+      - name: Install Salesforce CLI
+        run: npm install --global @salesforce/cli
+
+      - name: Authenticate Dev Hub (JWT)
+        env:
+          SF_JWT_KEY: ${{ secrets.SF_JWT_KEY }}
+          SF_CLIENT_ID: ${{ secrets.SF_CLIENT_ID }}
+          SF_DEVHUB_USERNAME: ${{ secrets.SF_DEVHUB_USERNAME }}
+        run: |
+          printf '%s\n' "$SF_JWT_KEY" > "$RUNNER_TEMP/server.key"
+          sf org login jwt \
+            --client-id "$SF_CLIENT_ID" \
+            --jwt-key-file "$RUNNER_TEMP/server.key" \
+            --username "$SF_DEVHUB_USERNAME" \
+            --alias DevHub \
+            --set-default-dev-hub
+          rm -f "$RUNNER_TEMP/server.key"
+
+      - name: Create scratch org
+        run: |
+          sf org create scratch \
+            --definition-file config/project-scratch-def.json \
+            --alias "$SCRATCH_ALIAS" \
+            --set-default \
+            --duration-days 1 \
+            --target-dev-hub DevHub \
+            --wait 20
+
+      - name: Deploy source
+        run: sf project deploy start --target-org "$SCRATCH_ALIAS" --wait 30
+
+      - name: Apex tests
+        run: |
+          if ! find force-app -name '*.cls' | grep -q .; then
+            echo "No Apex classes yet - skipping Apex tests."
+            exit 0
+          fi
+          sf apex run test \
+            --target-org "$SCRATCH_ALIAS" \
+            --test-level RunLocalTests \
+            --code-coverage \
+            --result-format human \
+            --wait 30
+
+      - name: Delete scratch org
+        if: always()
+        run: sf org delete scratch --target-org "$SCRATCH_ALIAS" --no-prompt || true

@@ -51,4 +51,12 @@ $RECYCLE.BIN/
 **/.venv/
 **/venv/
 
+# Private project docs and Claude Code instructions (local only)
 /docs
+/CLAUDE.md
+
+# JWT keys and certificates for CI (never commit)
+*.key
+*.pem
+*.crt
+/.certs/

@@ -4,11 +4,11 @@
   "version": "0.0.1",
   "description": "PMIMP - Kanban project management app on Salesforce",
   "scripts": {
-    "lint": "eslint \"force-app/**/{aura,lwc}/**/*.js\"",
+    "lint": "eslint --no-error-on-unmatched-pattern \"force-app/**/{aura,lwc}/**/*.js\"",
     "scan": "sf code-analyzer run --workspace force-app --view table",
     "scan:ci": "sf code-analyzer run --workspace force-app --severity-threshold 3 --output-file code-analyzer-results.html",
     "test": "npm run test:unit",
-    "test:unit": "sfdx-lwc-jest",
+    "test:unit": "sfdx-lwc-jest -- --passWithNoTests",
     "test:unit:watch": "sfdx-lwc-jest --watch",
     "test:unit:debug": "sfdx-lwc-jest --debug",
     "test:unit:coverage": "sfdx-lwc-jest --coverage",
